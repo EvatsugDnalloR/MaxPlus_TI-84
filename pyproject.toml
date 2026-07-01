@@ -1,0 +1,7 @@
+[project]
+name = "maxplus-ti-84"
+version = "0.1.0"
+description = "A lightweight Python script that brings max-plus algebra to your TI‑84 Plus CE‑T calculator"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = []
