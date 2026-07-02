@@ -10,7 +10,7 @@
 | **2** | Matrix Addition | $(\mathbf{A} \oplus \mathbf{B})_{ij} := A _{ij}  \oplus B _{ij}$ for all $\mathbf{A}, \mathbf{B} \in \mathbb{T}^{m \times n}$|
 | **3** | Matrix Multiplication | $(\mathbf{A} \otimes \mathbf{B})\_{ij} := \bigoplus\limits_{k = 1}^{n} A_{ik} \otimes B_{kj}$ for all $\mathbf{A} \in \mathbb{T}^{m \times n}, \mathbf{B} \in \mathbb{T}^{n \times \ell}$|
 | **4** | Vector Convolution | $(\mathbf{v} \otimes \mathbf{w})\_k := \bigoplus\limits_{i=1}^n v\_i \otimes w\_{k-i}$ for all $\mathbf{v}, \mathbf{w} \in \mathbb{T}^n$   |
-| **5** | Spectral Radius (Largest Eigenvalue) |**maximum cycle mean** of the precedence graph for a given matrix $\mathbf{M} \in \mathbb{T}^{n \times n}$ (Karp’s algorithm) |
+| **5** | Spectral Radius & Eigenvector |**maximum cycle mean** (largest eigenvalue $\lambda$) of the precedence graph for a given matrix $\mathbf{M} \in \mathbb{T}^{n \times n}$ (Karp's algorithm), plus the corresponding **normal eigenvector**. 
 
 ---
 
@@ -36,7 +36,7 @@ uv run max_plus.py
 
 | Progress | Task | Description |
 | --- | --- | --- |
-| ⏳ *In progress* | **Eigenvector** | Implement computation of a **normal eigenvector** with respect to the largest eigenvalue (critical graph + potential propagation). |
+| ✅ *Done* | **Eigenvector** | Implement computation of a **normal eigenvector** with respect to the largest eigenvalue (critical graph + potential propagation). |
 | 🔄 *Planned* | **Power Method** | Add an iterative (Krylov) method for approximate spectral radius and eigenvectors. |
 | 🔄 *Planned* | **Input Validation** | Add better error handling and dimension checks. |
 | 🔄 *Planned* | **Sparse Representation** | Optimise for larger matrices by storing only finite entries. |

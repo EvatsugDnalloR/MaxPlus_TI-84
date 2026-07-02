@@ -113,6 +113,77 @@ def max_cycle_mean(M):
 
     return max_mean
 
+
+def compute_eigenvector(M, lam):
+    """
+    Compute a normal eigenvector of max-plus matrix M with eigenvalue lam.
+    
+    Returns a list (vector) of floats / '-inf' with max element == 0.
+    """
+    n = len(M)
+    if n == 0:
+        return []
+
+    # ---- Step 1: build lam-shifted adjacency matrix ----
+    # Definition C.31: edge from x_j to x_i with weight M[i][j] (when != -inf).
+    # So adj[from][to] = adj[j][i] = M[i][j] - lam.
+    # All D[i][i] start as -inf (no phantom zero self-loops).
+    D = [["-inf"] * n for _ in range(n)]
+    for i in range(n):
+        for j in range(n):
+            if M[i][j] != "-inf":
+                D[j][i] = M[i][j] - lam   # edge from j to i
+
+    # ---- Step 2: Floyd-Warshall (max-plus) longest paths ----
+    for k in range(n):
+        for i in range(n):
+            if D[i][k] == "-inf":
+                continue
+            for j in range(n):
+                if D[k][j] == "-inf":
+                    continue
+                val = D[i][k] + D[k][j]
+                if D[i][j] == "-inf" or val > D[i][j]:
+                    D[i][j] = val
+
+    # ---- Step 3: find a node on a critical cycle (D[i][i] ≈ 0) ----
+    # Without phantom self-loops, D[i][i] is the longest genuine cycle.
+    # A critical cycle in the lam-shifted graph has total weight 0.
+    root = None
+    for i in range(n):
+        if D[i][i] != "-inf" and abs(D[i][i]) < 1e-10:
+            root = i
+            break
+
+    # Fallback: any node that has any cycle (shouldn't normally be needed)
+    if root is None:
+        for i in range(n):
+            if D[i][i] != "-inf":
+                root = i
+                break
+
+    if root is None:
+        return ["-inf"] * n
+
+    # ---- Step 4: eigenvector = longest paths from root ----
+    eig = [D[root][j] if j != root else 0.0 for j in range(n)]
+    # (D[root][root] should already be ≈0 if root is on a critical cycle,
+    #  but we force it to exactly 0 for the empty-path interpretation.)
+
+    # ---- Step 5: normalize so max element == 0 ----
+    max_val = None
+    for v in eig:
+        if v != "-inf":
+            if max_val is None or v > max_val:
+                max_val = v
+    if max_val is not None:
+        for j in range(n):
+            if eig[j] != "-inf":
+                eig[j] = eig[j] - max_val
+
+    return eig
+
+
 # ---------- Main Menu ----------
 print("--- MAX-PLUS ALGEBRA ---")
 print("1: Scalar Add & Mult")
@@ -163,8 +234,11 @@ elif choice == 5:
     if len(M) == 0 or len(M[0]) != len(M):
         print("Matrix must be square!")
     else:
-        eig = max_cycle_mean(M)
-        print("Largest eigenvalue (max cycle mean):", eig)
+        lam = max_cycle_mean(M)
+        print("Largest eigenvalue (max cycle mean):", lam)
+        if lam != "-inf":
+            vec = compute_eigenvector(M, lam)
+            print("Normal eigenvector:", vec)
 
 else:
     print("Invalid choice")
